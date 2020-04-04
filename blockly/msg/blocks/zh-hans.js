@@ -1,0 +1,1 @@
+Blockly.Msg.WEBDUINO_LCD1602 = "LCD (1602)，SDA ";

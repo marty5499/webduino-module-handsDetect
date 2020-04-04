@@ -1,0 +1,18 @@
+<category id="catHandsDetect">
+
+  <block type="hands_create_detect">
+    <value name="camera">
+      <block type="variables_get">
+        <field name="VAR">camera</field>
+      </block>
+    </value>
+  </block>
+
+  <block type="hands_on_detect">
+
+  </block>
+
+  <block type="hands_rtn_param">
+
+  </block>
+</category>

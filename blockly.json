@@ -1,0 +1,20 @@
+{
+  "types": [
+    "hands_create_detect"
+  ],
+  "category": "catEduExtension",
+  "scripts": [
+    "blockly/blocks.js",
+    "blockly/javascript.js"
+  ],
+  "dependencies": [
+    "camera.js",
+    "tfjs@latest.min.js",
+    "handtrack.min.js",
+    "HandsDetect.js",
+    "hands-blockly.js"
+  ],
+  "msg": "blockly/msg",
+  "blocksMsg": "blockly/msg/blocks",
+  "toolbox": "blockly/toolbox.xml"
+}

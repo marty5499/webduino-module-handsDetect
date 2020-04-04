@@ -1,0 +1,1 @@
+MSG.catHandsDetect = "Hands Detect";

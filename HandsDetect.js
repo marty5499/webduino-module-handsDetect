@@ -3,6 +3,7 @@ class HandDetect {
     this.strokeStyle = '#ff0000';
     this.lineWidth = 5;
     this.callbackList = [];
+    this.historyPos = [];
     this.modelParams = {
       flipHorizontal: true, // flip e.g for video 
       imageScaleFactor: 0.8, // reduce input image size .
@@ -25,6 +26,37 @@ class HandDetect {
     this.callbackList.push(callback);
   }
 
+  fixPos(pos) {
+    //debugger;
+    this.historyPos.push(pos);
+    if (this.historyPos.length > 10) {
+      this.historyPos.shift();
+    }
+    var avgX = 0;
+    var avgY = 0;
+    var avgW = 0;
+    var avgH = 0;
+    var len = this.historyPos.length;
+    for (var i = 0; i < len; i++) {
+      avgX += this.historyPos[i][0];
+      avgY += this.historyPos[i][1];
+      avgW += this.historyPos[i][2];
+      avgH += this.historyPos[i][3];
+    }
+    var nx = parseInt(avgX / len);
+    var ny = parseInt(avgY / len);
+    var nw = parseInt(avgW / len);
+    var nh = parseInt(avgH / len);
+    var dist = this.getDistance(nx, pos[0], ny, pos[1]);
+    return dist < 10 ? [] : [nx, ny, nw, nh];
+  }
+
+  getDistance(x1, y1, x2, y2) {
+    var dx = x1 - x2;
+    var dy = y1 - y2;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
   start(color, lineWidth) {
     handTrack.load(this.modelParams).then(model => {
       var self = this;
@@ -39,7 +71,10 @@ class HandDetect {
           var hands = [];
           var amt = predictions.length;
           for (var i = 0; i < amt; i++) {
-            var hand = predictions[i]['bbox'];
+            var hand = self.fixPos(predictions[i]['bbox']);
+            if (hand.length == 0) {
+              continue; //filter noise data (dist<3)
+            }
             hand.push(predictions[i]['score']);
             hands.push(hand);
             //flip

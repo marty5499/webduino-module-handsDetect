@@ -13,7 +13,8 @@ Blockly.JavaScript['hands_on_detect'] = function (block) {
   var code = variable_hands + '.on(function(handInfo){\n';
   code += statements_exec;
   code += '});\n';
-  code += variable_hands + '.start("#ff0000",5);\n';
+  code += 'await ' + variable_hands + '.start("#ff0000",5);\n';
+  code += variable_hands + '.startCam("#ff0000",5);\n';
   return code;
 };
 

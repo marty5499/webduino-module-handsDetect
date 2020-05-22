@@ -1,30 +1,12 @@
 +(async function (window, webduino) {
   'use strict';
 
-  if (typeof (window.createOrGetVideoEle) != "function") {
-    window.createOrGetVideoEle = function (id, url, width, height) {
-      var videlem = document.getElementById(id);
-      if (videlem == null) {
-        var videlem = document.createElement("video");
-        videlem.id = id;
-        document.body.appendChild(videlem);
-      }
-      var sourceMP4 = document.createElement("source");
-      videlem.appendChild(sourceMP4);
-      sourceMP4.type = "video/mp4";
-      sourceMP4.src = url;
-      videlem.width = width;
-      videlem.height = height;
-      return videlem;
-    }
-  }
-
-  if (typeof (window.createCamera) != "function") {
+  if (typeof (window.createCameraForHands) != "function") {
+    window.createCameraForHands = function () { };
     window.createCamera = async function (camSource, width, height, rotate, flip, opacity) {
       function pageX(elem) {
         return elem.offsetParent ? elem.offsetLeft + pageX(elem.offsetParent) : elem.offsetLeft;
       }
-
       function pageY(elem) {
         return elem.offsetParent ? elem.offsetTop + pageY(elem.offsetParent) : elem.offsetTop;
       }
@@ -39,7 +21,6 @@
       if (rotate) {
         cam.setRotate(90);
       }
-      await cam.start();
       c1.style.position = 'absolute';
       c1.style.top = '0';
       return cam;

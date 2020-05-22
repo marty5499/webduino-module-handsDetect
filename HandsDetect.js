@@ -57,38 +57,47 @@ class HandDetect {
     return Math.sqrt(dx * dx + dy * dy);
   }
 
-  start(color, lineWidth) {
-    handTrack.load(this.modelParams).then(model => {
+  async start(color, lineWidth) {
+    return new Promise((resolve, reject) => {
       var self = this;
-      var cnt = 0;
-      self.cam.onCanvas(function (canvas) {
-        if (cnt++ % 3 != 0) return;
-        var ctx = canvas.getContext("2d");
-        ctx.beginPath();
-        ctx.strokeStyle = color;
-        ctx.lineWidth = lineWidth;
-        model.detect(canvas).then(predictions => {
-          var hands = [];
-          var amt = predictions.length;
-          for (var i = 0; i < amt; i++) {
-            var hand = self.fixPos(predictions[i]['bbox']);
-            if (hand.length == 0) {
-              continue; //filter noise data (dist<3)
-            }
-            hand.push(predictions[i]['score']);
-            hands.push(hand);
-            //flip
-            hand[0] = canvas.width - (hand[0] + hand[2]);
-            ctx.rect(hand[0], hand[1], hand[2], hand[3]);
-            // process callback
-            for (var i = 0; i < self.callbackList.length; i++) {
-              self.handInfo = hand;
-              self.callbackList[i](hand);
-            }
-          }
-          ctx.stroke();
-        });
+      handTrack.load(this.modelParams).then(model => {
+        self.model = model;
+        resolve();
       });
     });
   }
+
+  startCam(color, lineWidth) {
+    var self = this;
+    var cnt = 0;
+    this.cam.onCanvas(function (canvas) {
+      if (cnt++ % 3 != 0) return;
+      var ctx = canvas.getContext("2d");
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineWidth;
+      self.model.detect(canvas).then(predictions => {
+        var hands = [];
+        var amt = predictions.length;
+        for (var i = 0; i < amt; i++) {
+          var hand = self.fixPos(predictions[i]['bbox']);
+          if (hand.length == 0) {
+            continue; //filter noise data (dist<3)
+          }
+          hand.push(predictions[i]['score']);
+          hands.push(hand);
+          //flip
+          hand[0] = canvas.width - (hand[0] + hand[2]);
+          ctx.rect(hand[0], hand[1], hand[2], hand[3]);
+          // process callback
+          for (var i = 0; i < self.callbackList.length; i++) {
+            self.handInfo = hand;
+            self.callbackList[i](hand);
+          }
+        }
+        ctx.stroke();
+      });
+    });
+  }
+
 }

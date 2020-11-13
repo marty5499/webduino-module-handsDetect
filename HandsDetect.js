@@ -87,7 +87,11 @@ class HandDetect {
           hand.push(predictions[i]['score']);
           hands.push(hand);
           //flip
-          hand[0] = canvas.width - (hand[0] + hand[2]);
+          if (self.cam.getFlip()) {
+            hand[0] = hand[0] + hand[2] / 2;
+          } else {
+            hand[0] = canvas.width - (hand[0] + hand[2]);
+          }
           ctx.rect(hand[0], hand[1], hand[2], hand[3]);
           // process callback
           for (var i = 0; i < self.callbackList.length; i++) {
